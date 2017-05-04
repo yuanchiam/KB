@@ -81,15 +81,15 @@ and node_id not in (-12345)
 group by 1) sess
 
 
--- Searches per Ticket
+-- Article per Ticket
 -- those who perform at least one search per ticket 
 
-select avg(search.num_searches)
+select avg(art.num_articles)
 from
 (select 
 kb.ticket_code,
-sum(c.kb_search_cnt) num_searches
-from dse.cs_contact_f c 
+count(distinct article_id) num_articles
+from   dse.cs_contact_f c 
 join dse.geo_country_d geo on c.contact_origin_country_code = geo.country_iso_code 
 join dse.cs_transfer_type_d trt on c.transfer_type_id = trt.transfer_type_id 
 join dse.cs_contact_subchannel_d sub on c.contact_subchannel_id=sub.contact_subchannel_id 
@@ -97,8 +97,8 @@ join dse.cs_contact_skill_d sk on c.contact_skill_id=sk.contact_skill_id
 join dse.cs_kb_node_visit_f kb on c.first_ticket_id=kb.ticket_code
 left join (select * from dse.cs_recontact_f 
      where days_to_recontact_cnt<=7 
-     and fact_utc_date >= 20170401 ) rcr on c.contact_code = rcr.contact_code
-where c.fact_utc_date between 20170401 and 20170630
+     and fact_utc_date >= 20170101 ) rcr on c.contact_code = rcr.contact_code
+where c.fact_utc_date between 20170101 and 20170331
 and sk.escalation_code = 'No-Escalation' 
 and trt.major_transfer_type_desc!='TRANSFER_OUT' 
 and sub.contact_channel_id in ('Phone','Chat') 
@@ -108,6 +108,6 @@ and c.cust_msg_cnt>=2
 and kb.page_load_cnt>0
 and kb.application_id in ('padme','csinternalkb')
 and kb.article_id>0
-and kb.fact_date between 20170401 and 20170630
+and kb.fact_date between 20170101 and 20170331
 and c.kb_search_cnt>0
-group by kb.ticket_code) search
+group by kb.ticket_code) art
