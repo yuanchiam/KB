@@ -8,7 +8,9 @@ from
 fact_date,
 api.article_id,
 api.article_name, 
-case when kb.language_id is null then api.language_id else kb.language_id end as language_tmp,
+case when kb.language_id is null then api.language_id 
+     when lower(kb.language_id) in ('es-es','fr-ca','pt-pt','zh-tw','zh-cn') then substring(lower(kb.language_id),1,2)
+     else kb.language_id end as language_tmp,
 sum(coalesce(kb.visitors,0)) visitors
 
 from
