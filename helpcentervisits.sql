@@ -7,6 +7,7 @@ sum(coalesce(kb.visitors,0)) visitors
 
 from
 
+-- joining dse.cs_kb_article_d to find article names
 (select node.article_id, art.article_name, node.node_id, node.application_id,
 lower(node.language_id) as language_id
 from dse.cs_kb_node_d node
