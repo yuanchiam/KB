@@ -4,16 +4,16 @@ select
   contact.article_name,
   contact.HC_KB_flag,
   contact.vg_flag,
-  contact.rcr7*1.0/contact.volume as rcr,
+  sum(contact.rcr7)*1.0/sum(contact.volume) as rcr,
   contact.member_status,
   contact.ticket_gate_level0_desc,
   contact.ticket_gate_level1_desc,
   contact.ticket_gate_level2_desc,
   contact.ticket_gate_level3_desc,
   contact.contact_subchannel_id,
-  contact.negative_survey_responses*1.0/contact.survey_responses as dsat,
+  sum(contact.negative_survey_responses)*1.0/sum(contact.survey_responses) as dsat,
   contact.is_referred_externally,
-  contact.handle_time*1.0/contact.volume as aht,
+  sum(contact.handle_time)*1.0/sum(contact.volume) as aht,
   contact.fact_utc_date
 
 from
