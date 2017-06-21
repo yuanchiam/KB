@@ -11,7 +11,8 @@ select
   contact.ticket_gate_level2_desc,
   contact.ticket_gate_level3_desc,
   contact.contact_subchannel_id,
-  sum(contact.negative_survey_responses)*1.0/sum(contact.survey_responses) as dsat,
+  sum(contact.negative_survey_responses) as tot_neg_sur,
+  sum(contact.survey_responses) as tot_sur,
   contact.is_referred_externally,
   sum(contact.handle_time)*1.0/sum(contact.volume) as aht,
   contact.fact_utc_date
@@ -106,4 +107,5 @@ group by
   contact.contact_subchannel_id,
   contact.is_referred_externally,
   contact.fact_utc_date
- 
+  
+  
