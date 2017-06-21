@@ -1,3 +1,25 @@
+select
+
+  count(contact.account_id) as cnt,
+  contact.article_name,
+  contact.HC_KB_flag,
+  contact.vg_flag,
+  contact.rcr7*1.0/contact.volume as rcr,
+  contact.member_status,
+  contact.ticket_gate_level0_desc,
+  contact.ticket_gate_level1_desc,
+  contact.ticket_gate_level2_desc,
+  contact.ticket_gate_level3_desc,
+  contact.contact_subchannel_id,
+  contact.negative_survey_responses*1.0/contact.survey_responses as dsat,
+  contact.is_referred_externally,
+  contact.handle_time*1.0/contact.volume as aht,
+  contact.fact_utc_date
+
+from
+
+(
+
 select 
   b.*,
   c.article_name,
@@ -8,6 +30,7 @@ select
   3810,3604,3675,37496,37149,3972,3669,30328,11960,3691,3707,4021,3822,
   4941,3803,43611) then 1 else 0 end as vg_flag,
   cc.call_center_desc,
+  cf.account_id,
   cf.contact_origin_country_code,
   case when rcr.contact_code is null then 0 else 1 end as rcr7,
   case when cf.account_id<0 then 'Non-Member' else 'Member' end as member_status,
@@ -51,10 +74,8 @@ and application_id in ('padme','csinternalkb')) b
 
 on a.session_id=b.session_id
 
-join dse.cs_kb_article_d c on b.article_id=c.article_id
-
-join dse.cs_contact_f cf on a.ticket_code=cf.first_ticket_id
-
+ join dse.cs_kb_article_d c on b.article_id=c.article_id
+ join dse.cs_contact_f cf on a.ticket_code=cf.first_ticket_id
  join dse.cs_transfer_type_d trt on cf.transfer_type_id = trt.transfer_type_id
  join dse.cs_contact_skill_d r on r.contact_skill_id = cf.contact_skill_id
  join dse.cs_call_center_d cc on cc.call_center_id = cf.call_center_id 
@@ -70,5 +91,19 @@ join dse.cs_contact_f cf on a.ticket_code=cf.first_ticket_id
  and trt.major_transfer_type_desc not in ('TRANSFER_OUT')
  and cf.answered_cnt>0
  and cf.contact_subchannel_id in ('Phone', 'Chat', 'voip','InApp', 'MBChat')
- 
+  
+) contact
+
+group by
+  contact.article_name,
+  contact.HC_KB_flag,
+  contact.vg_flag,
+  contact.member_status,
+  contact.ticket_gate_level0_desc,
+  contact.ticket_gate_level1_desc,
+  contact.ticket_gate_level2_desc,
+  contact.ticket_gate_level3_desc,
+  contact.contact_subchannel_id,
+  contact.is_referred_externally,
+  contact.fact_utc_date
  
